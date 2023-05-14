@@ -1,3 +1,4 @@
+#pragma once
 #include "cell.h"
 
 typedef struct {
@@ -6,27 +7,28 @@ typedef struct {
     Cell** head_columns;
     int size_lines;
     int size_columns;
+    int size_cells;
 
 } Matrix;
 
 
-//-------------------- MEMÓRIA --------------------
+//-------------------- memory --------------------
 
-Matrix* create_matrix ();
-void realloc_matrix ();
-Matrix* destroy_matrix ();
+Matrix* create_matrix (int sz_lines, int sz_columns);
+void destroy_matrix (Matrix* m);
 
-//-------------------- LEITURA --------------------
+//-------------------- reading --------------------
 
-Matrix* read_matrix ();
+void read_matrix (Matrix* m);
 
-//-------------------- BINÁRIO --------------------
+//-------------------- binary --------------------
 
 void bin_print_sparse_matrix (); //apenas valores não nulos devem ser impressos
 Matrix* bin_read_sparse_matrix ();
 
-//-------------------- FUNCIONALIDADES --------------------
+//-------------------- functionalities --------------------
 
+void change_value_matrix();
 Matrix* sum_matrix ();
 Matrix* multiplication_of_matrix ();
 Matrix* multiply_scalar_matrix ();
@@ -37,14 +39,14 @@ Matrix* slice_matrix ();
 Matrix* transpose_matrix ();
 Matrix* convolution_matrix ();
 
-//-------------------- PRINT --------------------
+//-------------------- print --------------------
 
 void print_sparse_matrix ();
 void print_dense_matrix ();
 
-//-------------------- AUXILIARES --------------------
+//-------------------- auxiliary --------------------
 
-//-------------------- EXTRAS --------------------
+//-------------------- extras --------------------
 
 Matrix* gauss_elimination_matrix ();
 Matrix* determinant_matrix ();

@@ -4,7 +4,8 @@ COMPILED = compiled
 
 LIBRARY = -I tarefas -L . -ltads -lm
 
-all: libtads.a indexador principal
+all: 
+	gcc -c cell.c matrix.c
 	
 #make experimental
 
@@ -14,30 +15,14 @@ all: libtads.a indexador principal
 	gcc $(FLAGS) tads/documentos.c -o $(COMPILED)/documentos.o
 	gcc $(FLAGS) tads/propriedades.c -o $(COMPILED)/propriedades.o
 	gcc $(FLAGS) tads/indices.c -o $(COMPILED)/indices.o
-
-libtads.a: $(COMPILED)/palavras.o $(COMPILED)/documentos.o $(COMPILED)/propriedades.o $(COMPILED)/indices.o
-	ar -crs libtads.a $(COMPILED)/palavras.o $(COMPILED)/documentos.o $(COMPILED)/propriedades.o $(COMPILED)/indices.o
-
-indexador: indexador.c 
-	gcc -o indexador indexador.c $(LIBRARY)
-
-principal: principal.c 
-	gcc -o principal principal.c $(LIBRARY)
-
-experimental: experimental.c
-	gcc -o experimental experimental.c $(LIBRARY)
-	./experimentos
 	
 run: 
 	make
-	./indexador datasets/medium-small/test.txt binario.bin
-	./principal binario.bin 15
+	./main
 
 clean:
-	rm -f indexador principal
-	rm -rf $(COMPILED)
-	rm libtads.a
-	rm binario.bin
+	rm main
+	rm %.o
 	clear
 
 valgrind:
@@ -47,4 +32,4 @@ valgrind:
 
 gdb:
 	make
-	gdb ./indexador datasets/medium-small/test.txt binario.bin 
+	gdb ./main datasets/medium-small/test.txt binario.bin 

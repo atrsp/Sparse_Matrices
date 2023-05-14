@@ -1,3 +1,4 @@
+#pragma once 
 
 typedef struct {
 
@@ -10,9 +11,9 @@ typedef struct {
 } Cell;
 
 
-//-------------------- MEMÓRIA --------------------
+//-------------------- memory --------------------
 
 Cell* create_cell ();
-Cell* destroy_cell ();
+void destroy_cell (Cell* c);
 
-//-------------------- AUXILIARES --------------------
+//-------------------- auxiliary --------------------
