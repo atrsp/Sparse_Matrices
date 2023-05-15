@@ -22,6 +22,7 @@ void print_menu ()
     printf ("\t12. Transpose Matrix;\n");
     printf ("\t13. Matrix Convolution;\n");
     printf ("\t14. Change cell value;\n");
+    printf ("\t15. Get cell value;\n");
 
 
     printf ("\nType the number of the funcion: \033[91m");
@@ -34,6 +35,7 @@ int main (){
     int sz_columns = 0;
     int option = -1;
 
+
     printf ("Type the number of lines of your matrix: \033[91m");
     scanf ("%d", &sz_lines);
 
@@ -41,18 +43,62 @@ int main (){
     scanf ("%d", &sz_columns);
     printf ("\033\n[0m");
 
+    //o programa pede uma matriz principal e, caso use funções que envolvem 2 ou + matrizes, o código pedirá pela segunda;
+
     Matrix* m = create_matrix (sz_lines, sz_columns);
     read_matrix (m);
-
+    print_dense_matrix (m);
+    
+    /*
     print_menu ();
     scanf ("%d", &option);
     printf ("\033[0m");
 
     switch (option){
+
         case 1:
         break;
 
         case 2:
+        break;
+
+        case 3:
+        break;
+
+        case 4:
+        break;
+
+        case 5:
+        break;
+
+        case 6:
+        break;
+
+        case 7:
+        break;
+
+        case 8:
+        break;
+
+        case 9:
+        break;
+
+        case 10:
+        break;
+
+        case 11:
+        break;
+
+        case 12:
+        break;
+
+        case 13:
+        break;
+
+        case 14:
+        break;
+
+        case 15:
         break;
 
         default:
@@ -61,6 +107,7 @@ int main (){
             printf ("Please type a valid number.\n");
         break;
     }
+    */
 
     return 0;
 }

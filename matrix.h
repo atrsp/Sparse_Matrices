@@ -14,7 +14,7 @@ typedef struct {
 
 //-------------------- memory --------------------
 
-Matrix* create_matrix (int sz_lines, int sz_columns);
+Matrix* construct_matrix (int sz_lines, int sz_columns);
 void destroy_matrix (Matrix* m);
 
 //-------------------- reading --------------------

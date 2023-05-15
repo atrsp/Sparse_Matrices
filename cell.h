@@ -2,18 +2,18 @@
 
 typedef struct {
 
-    int value;
+    float value;
     int line;
     int column;
-    Cell* next_line;
-    Cell* next_column;
+    struct Cell* next_line;
+    struct Cell* next_column;
 
-} Cell;
+}Cell;
 
 
 //-------------------- memory --------------------
 
-Cell* create_cell ();
+Cell* construct_cell (int line, int column, float value);
 void destroy_cell (Cell* c);
 
 //-------------------- auxiliary --------------------
