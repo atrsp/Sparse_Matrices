@@ -17,10 +17,6 @@ typedef struct {
 Matrix* construct_matrix (int sz_lines, int sz_columns);
 void destroy_matrix (Matrix* m);
 
-//-------------------- reading --------------------
-
-void read_matrix (Matrix* m);
-
 //-------------------- binary --------------------
 
 void bin_print_sparse_matrix (); //apenas valores não nulos devem ser impressos
@@ -28,7 +24,7 @@ Matrix* bin_read_sparse_matrix ();
 
 //-------------------- functionalities --------------------
 
-void change_value_matrix();
+void add_value_matrix(Matrix* m, int idx_line, int idx_column, float value);
 Matrix* sum_matrix ();
 Matrix* multiplication_of_matrix ();
 Matrix* multiply_scalar_matrix ();
@@ -41,8 +37,8 @@ Matrix* convolution_matrix ();
 
 //-------------------- print --------------------
 
-void print_sparse_matrix ();
-void print_dense_matrix ();
+void print_sparse_matrix (Matrix* m);
+void print_dense_matrix (Matrix* m);
 
 //-------------------- auxiliary --------------------
 

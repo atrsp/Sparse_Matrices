@@ -1,15 +1,14 @@
 #pragma once 
 
-typedef struct {
+typedef struct cell {
 
     float value;
     int line;
     int column;
-    struct Cell* next_line;
-    struct Cell* next_column;
+    struct cell* next_line;
+    struct cell* next_column;
 
-}Cell;
-
+} Cell;
 
 //-------------------- memory --------------------
 

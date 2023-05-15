@@ -11,4 +11,4 @@ clean:
 
 valgrind:
 	make
-	valgrind ./matrix
+	valgrind --leak-check=full ./matrix
