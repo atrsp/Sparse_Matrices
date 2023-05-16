@@ -22,7 +22,9 @@ Matrix* construct_matrix (int sz_lines, int sz_columns)
 
 void destroy_matrix (Matrix* m)
 {
-
+    if (m != NULL)
+    {
+        
     for (int i = 0; i < m->size_lines; i++)
     {   
         Cell* c = m->head_lines[i];
@@ -39,17 +41,20 @@ void destroy_matrix (Matrix* m)
     free (m->head_lines);
     free (m->head_columns);
     free (m);
+    }
 }
 
 //-------------------- binary --------------------
 
+void bin_print_sparse_matrix (); 
+Matrix* bin_read_sparse_matrix ();
 
 //-------------------- functionalities --------------------
 
 void add_value_matrix(Matrix* m, int idx_line, int idx_column, float value)
 {       
 
-    if (value != 0 && idx_line >= 0 && idx_line < m->size_lines && idx_column >= 0 && idx_column < m->size_columns)
+    if (m != NULL && value != 0 && idx_line >= 0 && idx_line < m->size_lines && idx_column >= 0 && idx_column < m->size_columns)
     {   
 
         //por colunas
@@ -152,6 +157,97 @@ void add_value_matrix(Matrix* m, int idx_line, int idx_column, float value)
         
         }
     }
+
+    if (idx_column > m->size_columns || idx_line > m->size_lines || idx_column < 0 || idx_line < 0)
+    {
+        printf ("Invalid indexes.\n");
+        destroy_matrix (m);
+        exit (0);
+    }
+}
+
+float get_value_matrix (Matrix* m, int idx_line, int idx_column)
+{   
+    
+    //como tratar o caso de eu passar uma matriz não inicializada? -> quebra o código
+
+    if (m != NULL && idx_line >= 0 && idx_line < m->size_lines && idx_column >= 0 && idx_column < m->size_columns)
+    {
+        Cell* c = m->head_columns[idx_column];
+        while (c != NULL)
+        {
+            if (c->line == idx_line)
+                return c->value; 
+            
+            c = c->next_line;
+        }
+
+        return 0;
+    }
+    
+    else {
+        printf ("Invalid indexes.\n");
+        destroy_matrix (m);
+        exit (0);
+    }
+}
+
+Matrix* sum_matrix (Matrix* m1, Matrix* m2)
+{
+    Matrix* sum = copy_matrix(m1);
+
+    for (int i=0; i< m1->size_lines; i++)
+    {
+        Cell* c = m1->head_lines[i];
+        while (c != NULL)
+        {
+            c = c->next_column;
+        }
+    }
+
+    return sum;
+}
+
+Matrix* multiplication_of_matrix ();
+
+Matrix* multiply_scalar_matrix (Matrix* m, int scalar)
+{   
+    if (m != NULL)
+    {
+        Matrix* cpp = copy_matrix(m);
+
+        for (int i=0; i< m->size_lines; i++)
+        {
+            Cell* c = cpp->head_lines[i];
+            while (c != NULL)
+            {
+                c->value *= scalar;
+                c = c->next_column;
+            }
+        }
+
+        print_dense_matrix (m);
+        print_dense_matrix (cpp);
+
+        return cpp;
+    }
+    
+    else
+    {
+        printf ("Invalid matrix.\n");
+        exit (0);
+    }
+}
+
+Matrix* multiply_per_cells_matrix ();
+Matrix* swap_lines_matrix ();
+Matrix* swap_columns_matrix ();
+Matrix* slice_matrix ();
+
+Matrix* transpose_matrix (Matrix* m)
+{
+    Matrix* result = copy_matrix(m);
+    return result;
 }
 
 
@@ -221,3 +317,26 @@ void print_dense_matrix (Matrix* m)
 
     */
 }
+
+
+//-------------------- auxiliary --------------------
+
+Matrix* copy_matrix (Matrix* m)
+{
+    Matrix* cpp = construct_matrix (m->size_lines, m->size_columns);
+
+    for (int i=0; i< m->size_lines; i++)
+    {
+        Cell* c = m->head_lines[i];
+        while (c != NULL)
+        {
+            add_value_matrix(cpp, c->line, c->column, c->value);
+            c = c->next_column;
+        }
+    }
+
+    //print_dense_matrix (cpp);
+    return cpp;
+}
+
+//-------------------- extras --------------------

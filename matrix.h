@@ -25,7 +25,8 @@ Matrix* bin_read_sparse_matrix ();
 //-------------------- functionalities --------------------
 
 void add_value_matrix(Matrix* m, int idx_line, int idx_column, float value);
-Matrix* sum_matrix ();
+float get_value_matrix (Matrix* m, int idx_line, int idx_column);
+Matrix* sum_matrix (Matrix* m1, Matrix* m2);
 Matrix* multiplication_of_matrix ();
 Matrix* multiply_scalar_matrix ();
 Matrix* multiply_per_cells_matrix ();
@@ -41,6 +42,8 @@ void print_sparse_matrix (Matrix* m);
 void print_dense_matrix (Matrix* m);
 
 //-------------------- auxiliary --------------------
+
+Matrix* copy_matrix (Matrix* m);
 
 //-------------------- extras --------------------
 
