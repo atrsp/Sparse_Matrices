@@ -3,7 +3,7 @@ all:
 
 run: 
 	make
-	./matrix
+	./matrix bin
 
 clean:
 	rm -f matrix

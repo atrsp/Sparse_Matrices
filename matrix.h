@@ -19,8 +19,8 @@ void destroy_matrix (Matrix* m);
 
 //-------------------- binary --------------------
 
-void bin_print_sparse_matrix (); //apenas valores não nulos devem ser impressos
-Matrix* bin_read_sparse_matrix ();
+void bin_print_sparse_matrix (char* name, Matrix* m); //apenas valores não nulos devem ser impressos
+Matrix* bin_read_sparse_matrix (char* argv);
 
 //-------------------- functionalities --------------------
 

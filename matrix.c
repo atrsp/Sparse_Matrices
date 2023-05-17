@@ -46,8 +46,44 @@ void destroy_matrix (Matrix* m)
 
 //-------------------- binary --------------------
 
-void bin_print_sparse_matrix (); 
-Matrix* bin_read_sparse_matrix ();
+void bin_print_sparse_matrix (char* file_name, Matrix* m)
+{
+    FILE *file = fopen(file_name, "wb");
+
+    if (file == NULL)
+    {
+        printf("\033[91mNao foi possivel criar o arquivo de conteudo binario pelo caminho '%s'\n\033[0m", file_name);
+        destroy_matrix(m);
+        exit(0);
+    }
+
+    int sz_lines = m->size_lines;
+    int sz_columns = m->size_columns;
+
+    fwrite(&sz_lines, sizeof(int), 1, file);
+    fwrite(&sz_columns, sizeof(int), 1, file);
+
+}
+
+Matrix* bin_read_sparse_matrix (char* file_name)
+{
+    FILE *file = fopen(file_name, "rb");
+
+    if (file == NULL)
+    {
+        printf("\033[91mERRO: Nao foi possivel abrir o arquivo de conteudo binario pelo caminho '%s'\n\033[0m", file_name);
+        exit (0);
+    }
+
+    int sz_lines = 0;
+    int sz_columns = 0;
+
+    fread(&sz_lines, sizeof(int), 1, file);
+    fread(&sz_columns, sizeof(int), 1, file);
+
+    printf ("lines: %d, columns: %d\n", sz_lines, sz_columns);
+
+}
 
 //-------------------- functionalities --------------------
 
@@ -193,19 +229,36 @@ float get_value_matrix (Matrix* m, int idx_line, int idx_column)
 }
 
 Matrix* sum_matrix (Matrix* m1, Matrix* m2)
-{
-    Matrix* sum = copy_matrix(m1);
-
-    for (int i=0; i< m1->size_lines; i++)
+{   
+    if (m1->size_lines == m2->size_lines && m1->size_columns == m2->size_columns)
     {
-        Cell* c = m1->head_lines[i];
-        while (c != NULL)
+        Matrix* sum = construct_matrix(m1->size_lines, m1->size_columns);
+
+        for (int i=0; i< m1->size_lines; i++)
         {
-            c = c->next_column;
+            for (int j=0; j< m1->size_columns; j++)
+            {   
+                float v1 = get_value_matrix(m1, i, j);
+                float v2 = get_value_matrix(m2, i, j);
+                add_value_matrix(sum, i, j, v1+v2);
+            }
         }
+
+        //print_dense_matrix (m1);
+        //print_dense_matrix(m2);
+        //print_dense_matrix(sum);
+
+        return sum;
     }
 
-    return sum;
+    else 
+    {   
+        printf ("Invalid sizes.\n");
+        destroy_matrix(m1);
+        destroy_matrix(m2);
+        exit(0);
+    }
+    
 }
 
 Matrix* multiplication_of_matrix ();
