@@ -254,14 +254,41 @@ Matrix* sum_matrix (Matrix* m1, Matrix* m2)
     else 
     {   
         printf ("Invalid sizes.\n");
-        destroy_matrix(m1);
-        destroy_matrix(m2);
-        exit(0);
+        return NULL;
     }
     
 }
 
-Matrix* multiplication_of_matrix ();
+Matrix* multiplication_of_matrix (Matrix* m1, Matrix* m2)
+{
+    if (m1->size_columns == m2->size_lines && m1 != NULL && m2 != NULL)
+    {
+        Matrix* result = construct_matrix (m1->size_lines, m2->size_columns);
+
+        for (int i=0; i < m1->size_lines; i++)
+        {   
+            int sum = 0;
+
+            for (int j=0; j < m2->size_columns; j++)
+            {
+                for (int h=0; h< m1->size_columns; h++)
+                {
+                    sum += (get_value_matrix(m1, i, h) * get_value_matrix(m2, h, j));
+                    add_value_matrix (result, i, j, sum);
+                }
+                sum = 0;
+            }
+        }
+
+        print_dense_matrix (m1);
+        print_dense_matrix(m2);
+        print_dense_matrix(result);
+        
+        return result;
+    }
+
+    return NULL;
+}
 
 Matrix* multiply_scalar_matrix (Matrix* m, float scalar)
 {   
@@ -279,8 +306,8 @@ Matrix* multiply_scalar_matrix (Matrix* m, float scalar)
             }
         }
 
-        print_dense_matrix (m);
-        print_dense_matrix (cpp);
+        //print_dense_matrix (m);
+        //print_dense_matrix (cpp);
 
         return cpp;
     }
@@ -288,14 +315,63 @@ Matrix* multiply_scalar_matrix (Matrix* m, float scalar)
     else
     {
         printf ("Invalid matrix.\n");
-        exit (0);
+        return NULL;
     }
 }
 
-Matrix* multiply_per_cells_matrix ();
+Matrix* multiply_per_cells_matrix (Matrix* m1, Matrix* m2)
+{   
+
+    if (m1->size_lines == m2->size_lines && m1->size_columns == m2->size_columns)
+    {
+        Matrix* result = construct_matrix (m1->size_lines, m1->size_columns);
+
+        for (int i=0; i< m1->size_lines; i++)
+        {
+            for (int j=0; j< m1->size_columns; j++)
+            {   
+                float v1 = get_value_matrix(m1, i, j);
+                float v2 = get_value_matrix(m2, i, j);
+                add_value_matrix(result, i, j, v1*v2);
+            }
+        }
+
+        print_dense_matrix (m1);
+        print_dense_matrix (m2);
+        print_dense_matrix (result);
+
+        return result;
+    }
+    
+    else
+    {   
+        printf ("Invalid matrix.\n");
+        return NULL;
+    }
+
+}
+
 Matrix* swap_lines_matrix ();
 Matrix* swap_columns_matrix ();
-Matrix* slice_matrix ();
+
+Matrix* slice_matrix (Matrix* m, int fst_line, int fst_column, int last_line, int last_column)
+{   
+    int lines = fst_line - last_line + 1;
+    int columns = fst_column - last_column + 1;
+
+    Matrix* slice = construct_matrix (lines, columns);
+
+    for (int i = fst_line; i < last_line; i++)
+    {
+        for (int j = fst_column; j < last_column; j++)
+            add_value_matrix (slice, i, j, get_value_matrix(m, i, j));
+    }
+
+    print_dense_matrix (m);
+    print_dense_matrix (slice);
+
+    return slice;
+}
 
 Matrix* transpose_matrix (Matrix* m)
 {
@@ -318,6 +394,7 @@ Matrix* transpose_matrix (Matrix* m)
     return transp;
 }
 
+Matrix* convolution_matrix ();
 
 //-------------------- print --------------------
 
