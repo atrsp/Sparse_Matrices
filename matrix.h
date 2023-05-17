@@ -19,8 +19,8 @@ void destroy_matrix (Matrix* m); //done
 
 //-------------------- binary --------------------
 
-void bin_print_sparse_matrix (char* name, Matrix* m); 
-Matrix* bin_read_sparse_matrix (char* argv);
+void bin_print_sparse_matrix (char* name, Matrix* m); //done
+Matrix* bin_read_sparse_matrix (char* argv); //done
 
 //-------------------- functionalities --------------------
 

@@ -47,22 +47,39 @@ void destroy_matrix (Matrix* m)
 //-------------------- binary --------------------
 
 void bin_print_sparse_matrix (char* file_name, Matrix* m)
-{
-    FILE *file = fopen(file_name, "wb");
+{   
 
-    if (file == NULL)
+    if (m != NULL)
     {
-        printf("\033[91mNao foi possivel criar o arquivo de conteudo binario pelo caminho '%s'\n\033[0m", file_name);
-        destroy_matrix(m);
-        exit(0);
+        FILE *file = fopen(file_name, "wb");
+
+        if (file == NULL)
+        {
+            printf("\033[91mNao foi possivel criar o arquivo de conteudo binario pelo caminho '%s'\n\033[0m", file_name);
+            destroy_matrix (m);
+            exit (0);
+        }
+
+        fwrite(&m->size_lines, sizeof(int), 1, file);
+        fwrite(&m->size_columns, sizeof(int), 1, file);
+        //printf ("lines: %d, columns: %d\n", m->size_lines, m->size_columns);
+
+        for (int i=0; i< m->size_lines; i++)
+        {   
+            Cell* c = m->head_lines[i];
+            while (c != NULL)
+            {
+                fwrite(&c->line, sizeof(int), 1, file);
+                fwrite(&c->column, sizeof(int), 1, file);
+                fwrite(&c->value, sizeof(float), 1, file);
+                c = c->next_column;
+            }
+        }
+
+        //print_dense_matrix (m);
+
+        fclose (file);
     }
-
-    int sz_lines = m->size_lines;
-    int sz_columns = m->size_columns;
-
-    fwrite(&sz_lines, sizeof(int), 1, file);
-    fwrite(&sz_columns, sizeof(int), 1, file);
-
 }
 
 Matrix* bin_read_sparse_matrix (char* file_name)
@@ -72,7 +89,7 @@ Matrix* bin_read_sparse_matrix (char* file_name)
     if (file == NULL)
     {
         printf("\033[91mERRO: Nao foi possivel abrir o arquivo de conteudo binario pelo caminho '%s'\n\033[0m", file_name);
-        exit (0);
+        return NULL;
     }
 
     int sz_lines = 0;
@@ -80,18 +97,46 @@ Matrix* bin_read_sparse_matrix (char* file_name)
 
     fread(&sz_lines, sizeof(int), 1, file);
     fread(&sz_columns, sizeof(int), 1, file);
+    //printf ("lines: %d, columns: %d\n", sz_lines, sz_columns);
 
-    printf ("lines: %d, columns: %d\n", sz_lines, sz_columns);
+    Matrix* m = construct_matrix (sz_lines, sz_columns);
+    if (m != NULL)
+    {
+        float value;
+        int idx_line;
+        int idx_column;
 
+        while (!feof (file))
+        {   
+            fread(&idx_line, sizeof(int), 1, file);
+            fread(&idx_column, sizeof(int), 1, file);
+            fread(&value, sizeof(float), 1, file);
+
+            add_value_matrix (m, idx_line, idx_column, value);
+        }
+
+        //print_dense_matrix (m);
+
+        fclose (file);
+
+        return m;
+    }
+
+    return NULL;
 }
 
 //-------------------- functionalities --------------------
 
 void add_value_matrix(Matrix* m, int idx_line, int idx_column, float value)
 {       
+    //TRATAR CASO: SE FOR 0, DESTRUIR NÓ E REASSOCIAR
 
-    if (m != NULL && value != 0 && idx_line >= 0 && idx_line < m->size_lines && idx_column >= 0 && idx_column < m->size_columns)
-    {   
+    if (m == NULL || idx_column > m->size_columns || idx_line > m->size_lines || idx_column < 0 || idx_line < 0)
+    {
+        printf ("Invalid indexes.\n");
+        destroy_matrix (m);
+        exit (0);
+    }  
 
         //por colunas
 
@@ -110,28 +155,37 @@ void add_value_matrix(Matrix* m, int idx_line, int idx_column, float value)
             while (aux != NULL)
             {   
                 if (idx_column < aux->column)
-                {
-                    if (prev != NULL)
+                {   
+                    if (value != 0)
                     {
-                        prev->next_column = c;
-                        c->next_column = aux;
-                        break;
-                    }
+                        if (prev != NULL)
+                        {
+                            prev->next_column = c;
+                            c->next_column = aux;
+                            break;
+                        }
 
-                    else 
-                    {
-                        prev = m->head_lines[idx_line];
-                        m->head_lines[idx_line] = c;
-                        c->next_column = prev;
-                        break;
+                        else 
+                        {
+                            prev = m->head_lines[idx_line];
+                            m->head_lines[idx_line] = c;
+                            c->next_column = prev;
+                            break;
+                        }
                     }
-
                 }
 
                 if (aux->column == idx_column)
                 {   
                     m->size_cells--;
                     destroy_cell (c);
+
+                    if (value == 0)
+                    {
+                        prev->next_column = aux->next_column;
+                        break;
+                    }
+                    
                     aux->value = value;
                     break;
                 }
@@ -141,7 +195,7 @@ void add_value_matrix(Matrix* m, int idx_line, int idx_column, float value)
             }
 
             if (aux == NULL)
-                if (prev != NULL)
+                if (prev != NULL && value != 0)
                     prev->next_column = c;
         
         }
@@ -159,27 +213,37 @@ void add_value_matrix(Matrix* m, int idx_line, int idx_column, float value)
             while (aux != NULL)
             {   
                 if (idx_line < aux->line)
-                {
-                    if (prev != NULL)
+                {   
+                    if (value != 0)
                     {
-                        prev->next_line = c;
-                        c->next_line = aux;
-                        m->size_cells++;
-                        break;
-                    }
+                        if (prev != NULL)
+                        {
+                            prev->next_line = c;
+                            c->next_line = aux;
+                            m->size_cells++;
+                            break;
+                        }
 
-                    else 
-                    {
-                        prev = m->head_columns[idx_column];
-                        m->head_columns[idx_column] = c;
-                        c->next_line = prev;
-                        break;
-                    }
+                        else 
+                        {
+                            prev = m->head_columns[idx_column];
+                            m->head_columns[idx_column] = c;
+                            c->next_line = prev;
+                            break;
+                        }
+                    }    
                 }
 
                 if (aux->line == idx_line)
-                {
-                    aux->value = value;
+                {   
+                    if (value != 0)
+                        aux->value = value;
+                    else
+                    {
+                        prev->next_line = aux->next_line;
+                        destroy_cell (aux);
+                    }
+
                     break;
                 }
 
@@ -188,18 +252,10 @@ void add_value_matrix(Matrix* m, int idx_line, int idx_column, float value)
             }
 
             if (aux == NULL)
-                if (prev != NULL)
+                if (prev != NULL && value != 0)
                     prev->next_line = c;
         
-        }
-    }
-
-    if (idx_column > m->size_columns || idx_line > m->size_lines || idx_column < 0 || idx_line < 0)
-    {
-        printf ("Invalid indexes.\n");
-        destroy_matrix (m);
-        exit (0);
-    }
+        }    
 }
 
 float get_value_matrix (Matrix* m, int idx_line, int idx_column)
@@ -405,7 +461,7 @@ void print_sparse_matrix (Matrix* m)
         Cell* c = m->head_lines[i];
         while (c != NULL)
         {
-            printf ("(%d, %d) - %.2f\n", c->line, c->column, c->value);
+            printf ("[%d][%d] - %.2f\n", c->line, c->column, c->value);
             c = c->next_column;
         }
     }

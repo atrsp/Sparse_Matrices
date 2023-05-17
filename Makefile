@@ -3,12 +3,13 @@ all:
 
 run: 
 	make
-	./matrix
+	./matrix bin
 
 clean:
 	rm -f matrix
+	rm -f bin
 	clear
 
 valgrind:
 	make
-	valgrind -s --leak-check=full ./matrix
+	valgrind -s --leak-check=full ./matrix bin
