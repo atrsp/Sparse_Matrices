@@ -28,12 +28,12 @@ void add_value_matrix(Matrix* m, int idx_line, int idx_column, float value);
 float get_value_matrix (Matrix* m, int idx_line, int idx_column);
 Matrix* sum_matrix (Matrix* m1, Matrix* m2);
 Matrix* multiplication_of_matrix ();
-Matrix* multiply_scalar_matrix ();
+Matrix* multiply_scalar_matrix (Matrix* m, float scalar);
 Matrix* multiply_per_cells_matrix ();
 Matrix* swap_lines_matrix ();
 Matrix* swap_columns_matrix ();
 Matrix* slice_matrix ();
-Matrix* transpose_matrix ();
+Matrix* transpose_matrix (Matrix* m);
 Matrix* convolution_matrix ();
 
 //-------------------- print --------------------

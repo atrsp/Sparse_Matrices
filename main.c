@@ -27,10 +27,14 @@ int main (){
     //print_dense_matrix (m);
     //print_sparse_matrix (m);
 
-    Matrix* mscalar = multiply_scalar_matrix (m, 2);
+    //Matrix* mscalar = multiply_scalar_matrix (m, 2);
+    //print_dense_matrix(mscalar);
+
+    //Matrix* transp = transpose_matrix (m);
 
     destroy_matrix (m);
-    destroy_matrix (mscalar);
+    //destroy_matrix (transp);
+    //destroy_matrix (mscalar);
 
     return 0;
 }

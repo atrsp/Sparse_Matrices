@@ -210,7 +210,7 @@ Matrix* sum_matrix (Matrix* m1, Matrix* m2)
 
 Matrix* multiplication_of_matrix ();
 
-Matrix* multiply_scalar_matrix (Matrix* m, int scalar)
+Matrix* multiply_scalar_matrix (Matrix* m, float scalar)
 {   
     if (m != NULL)
     {
@@ -246,8 +246,23 @@ Matrix* slice_matrix ();
 
 Matrix* transpose_matrix (Matrix* m)
 {
-    Matrix* result = copy_matrix(m);
-    return result;
+    Matrix* transp = construct_matrix(m->size_columns, m->size_lines);
+
+    for (int i=0; i< m->size_lines; i++)
+    {
+        Cell* c = m->head_lines[i];
+
+        while (c != NULL)
+        {
+            add_value_matrix (transp, c->column, c->line, c->value);
+            c = c->next_column;
+        }
+    }
+
+    //print_dense_matrix (m);
+    //print_dense_matrix(transp);
+        
+    return transp;
 }
 
 
@@ -283,7 +298,7 @@ void print_dense_matrix (Matrix* m)
                 c = c->next_column;
             }
             else
-                printf ("0  ");
+                printf ("0.00  ");
 
         }
 
