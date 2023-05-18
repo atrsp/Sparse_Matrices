@@ -115,7 +115,7 @@ Matrix* bin_read_sparse_matrix (char* file_name)
             add_value_matrix (m, idx_line, idx_column, value);
         }
 
-        //print_dense_matrix (m);
+        print_dense_matrix (m);
 
         fclose (file);
 
@@ -131,12 +131,78 @@ void add_value_matrix(Matrix* m, int idx_line, int idx_column, float value)
 {       
     //TRATAR CASO: SE FOR 0, DESTRUIR NÓ E REASSOCIAR
 
-    if (m == NULL || idx_column > m->size_columns || idx_line > m->size_lines || idx_column < 0 || idx_line < 0)
+    if (m == NULL || idx_column >= m->size_columns || idx_line >= m->size_lines || idx_column < 0 || idx_line < 0)
     {
         printf ("Invalid indexes.\n");
-        destroy_matrix (m);
-        exit (0);
-    }  
+        return;
+    }   
+
+    else if (value == 0)
+    {
+        if (m->head_lines[idx_line] == NULL || m->head_columns[idx_column] == NULL)
+            return;
+
+
+        Cell* aux = m->head_lines [idx_line];
+        Cell* prev = NULL;
+
+        while (aux != NULL)
+        {
+            if (aux->column == idx_column)
+            {   
+                if (prev != NULL)
+                {
+                    prev->next_column = aux->next_column;
+                    break;
+                }
+                else 
+                {
+                    m->head_lines[idx_line] = m->head_lines[idx_line]->next_column;
+                    
+                    break;
+                }
+            }
+            else if (aux->column > idx_column)
+                return;
+
+            prev = aux;
+            aux = aux->next_column;
+        }
+
+        if (aux == NULL)
+            return;
+
+        aux = m->head_columns [idx_column];
+        prev = NULL;
+
+        while (aux != NULL)
+        {
+            if (aux->line == idx_line)
+            {   
+                if (prev != NULL)
+                {
+                    prev->next_line = aux->next_line;
+                    destroy_cell(aux);
+                    break;
+                }
+                else 
+                {   
+                    m->head_columns[idx_column] = m->head_columns[idx_column]->next_line;
+                    destroy_cell (aux);
+                    break;
+                }  
+            }
+
+            else if (aux->line > idx_line)
+                return;
+
+            prev = aux;
+            aux = aux->next_line;
+        }
+    }
+
+    else 
+    {
 
         //por colunas
 
@@ -155,37 +221,28 @@ void add_value_matrix(Matrix* m, int idx_line, int idx_column, float value)
             while (aux != NULL)
             {   
                 if (idx_column < aux->column)
-                {   
-                    if (value != 0)
+                {
+                    if (prev != NULL)
                     {
-                        if (prev != NULL)
-                        {
-                            prev->next_column = c;
-                            c->next_column = aux;
-                            break;
-                        }
-
-                        else 
-                        {
-                            prev = m->head_lines[idx_line];
-                            m->head_lines[idx_line] = c;
-                            c->next_column = prev;
-                            break;
-                        }
+                        prev->next_column = c;
+                        c->next_column = aux;
+                        break;
                     }
+
+                    else 
+                    {
+                        prev = m->head_lines[idx_line];
+                        m->head_lines[idx_line] = c;
+                        c->next_column = prev;
+                        break;
+                    }
+
                 }
 
                 if (aux->column == idx_column)
                 {   
                     m->size_cells--;
                     destroy_cell (c);
-
-                    if (value == 0)
-                    {
-                        prev->next_column = aux->next_column;
-                        break;
-                    }
-                    
                     aux->value = value;
                     break;
                 }
@@ -195,7 +252,7 @@ void add_value_matrix(Matrix* m, int idx_line, int idx_column, float value)
             }
 
             if (aux == NULL)
-                if (prev != NULL && value != 0)
+                if (prev != NULL)
                     prev->next_column = c;
         
         }
@@ -213,37 +270,27 @@ void add_value_matrix(Matrix* m, int idx_line, int idx_column, float value)
             while (aux != NULL)
             {   
                 if (idx_line < aux->line)
-                {   
-                    if (value != 0)
+                {
+                    if (prev != NULL)
                     {
-                        if (prev != NULL)
-                        {
-                            prev->next_line = c;
-                            c->next_line = aux;
-                            m->size_cells++;
-                            break;
-                        }
+                        prev->next_line = c;
+                        c->next_line = aux;
+                        m->size_cells++;
+                        break;
+                    }
 
-                        else 
-                        {
-                            prev = m->head_columns[idx_column];
-                            m->head_columns[idx_column] = c;
-                            c->next_line = prev;
-                            break;
-                        }
-                    }    
+                    else 
+                    {
+                        prev = m->head_columns[idx_column];
+                        m->head_columns[idx_column] = c;
+                        c->next_line = prev;
+                        break;
+                    }
                 }
 
                 if (aux->line == idx_line)
-                {   
-                    if (value != 0)
-                        aux->value = value;
-                    else
-                    {
-                        prev->next_line = aux->next_line;
-                        destroy_cell (aux);
-                    }
-
+                {
+                    aux->value = value;
                     break;
                 }
 
@@ -252,10 +299,11 @@ void add_value_matrix(Matrix* m, int idx_line, int idx_column, float value)
             }
 
             if (aux == NULL)
-                if (prev != NULL && value != 0)
+                if (prev != NULL)
                     prev->next_line = c;
         
-        }    
+        }
+    }
 }
 
 float get_value_matrix (Matrix* m, int idx_line, int idx_column)
@@ -300,9 +348,11 @@ Matrix* sum_matrix (Matrix* m1, Matrix* m2)
             }
         }
 
+        
         //print_dense_matrix (m1);
         //print_dense_matrix(m2);
-        //print_dense_matrix(sum);
+        print_dense_matrix(sum);
+        
 
         return sum;
     }
@@ -363,7 +413,7 @@ Matrix* multiply_scalar_matrix (Matrix* m, float scalar)
         }
 
         //print_dense_matrix (m);
-        //print_dense_matrix (cpp);
+        print_dense_matrix (cpp);
 
         return cpp;
     }
@@ -445,7 +495,7 @@ Matrix* transpose_matrix (Matrix* m)
     }
 
     //print_dense_matrix (m);
-    //print_dense_matrix(transp);
+    print_dense_matrix(transp);
         
     return transp;
 }
@@ -461,7 +511,7 @@ void print_sparse_matrix (Matrix* m)
         Cell* c = m->head_lines[i];
         while (c != NULL)
         {
-            printf ("[%d][%d] - %.2f\n", c->line, c->column, c->value);
+            printf ("(%d, %d) - %.2f\n", c->line, c->column, c->value);
             c = c->next_column;
         }
     }
@@ -539,5 +589,3 @@ Matrix* copy_matrix (Matrix* m)
     //print_dense_matrix (cpp);
     return cpp;
 }
-
-//-------------------- extras --------------------

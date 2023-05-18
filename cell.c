@@ -19,6 +19,7 @@ Cell* construct_cell (int line, int column, float value)
 }
 
 void destroy_cell (Cell* c)
-{
-    free (c);
+{   
+    if (c != NULL)
+        free (c);
 }
