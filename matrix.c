@@ -7,7 +7,14 @@
 //-------------------- memory --------------------
 
 Matrix* construct_matrix (int sz_lines, int sz_columns)
-{
+{   
+
+    if (sz_lines <= 0 || sz_columns <= 0)
+    {
+        printf ("\033[91mInvalid size of matrix\n\033[0m");
+        return NULL;
+    }
+
     Matrix* m = (Matrix*)calloc(1, sizeof(Matrix));
     
     m->size_columns = sz_columns;
@@ -16,7 +23,7 @@ Matrix* construct_matrix (int sz_lines, int sz_columns)
 
     m->head_columns = (Cell**)calloc(m->size_columns, sizeof(Cell));
     m->head_lines = (Cell**)calloc(m->size_lines, sizeof(Cell));
-
+    
     return m;
 }
 
@@ -55,7 +62,7 @@ void bin_print_sparse_matrix (char* file_name, Matrix* m)
 
         if (file == NULL)
         {
-            printf("\033[91mNao foi possivel criar o arquivo de conteudo binario pelo caminho '%s'\n\033[0m", file_name);
+            printf("\033[91mERROR: Could not create file named '%s'.\n\033[0m", file_name);
             destroy_matrix (m);
             exit (0);
         }
@@ -88,7 +95,7 @@ Matrix* bin_read_sparse_matrix (char* file_name)
 
     if (file == NULL)
     {
-        printf("\033[91mERRO: Nao foi possivel abrir o arquivo de conteudo binario pelo caminho '%s'\n\033[0m", file_name);
+        printf("\033[91mERROR: Unable to open file named '%s'.\n\033[0m", file_name);
         return NULL;
     }
 
@@ -133,7 +140,7 @@ void add_value_matrix(Matrix* m, int idx_line, int idx_column, float value)
 
     if (m == NULL || idx_column >= m->size_columns || idx_line >= m->size_lines || idx_column < 0 || idx_line < 0)
     {
-        printf ("Invalid indexes.\n");
+        printf ("\033[91mInvalid indexes.\033[0m\n");
         return;
     }   
 
@@ -326,7 +333,7 @@ float get_value_matrix (Matrix* m, int idx_line, int idx_column)
     }
     
     else {
-        printf ("Invalid indexes.\n");
+        printf ("\033[91mInvalid indexes.\033[0m\n");
         destroy_matrix (m);
         exit (0);
     }
@@ -359,7 +366,7 @@ Matrix* sum_matrix (Matrix* m1, Matrix* m2)
 
     else 
     {   
-        printf ("Invalid sizes.\n");
+        printf ("\033[91mInvalid sizes of matrices.\033[0m\n");
         return NULL;
     }
     
@@ -378,21 +385,21 @@ Matrix* multiplication_of_matrix (Matrix* m1, Matrix* m2)
             for (int j=0; j < m2->size_columns; j++)
             {
                 for (int h=0; h< m1->size_columns; h++)
-                {
-                    sum += (get_value_matrix(m1, i, h) * get_value_matrix(m2, h, j));
-                    add_value_matrix (result, i, j, sum);
-                }
+                    sum += (get_value_matrix(m1, i, h) * get_value_matrix(m2, h, j));  
+                
+                add_value_matrix (result, i, j, sum);
                 sum = 0;
             }
         }
 
-        print_dense_matrix (m1);
-        print_dense_matrix(m2);
+        //print_dense_matrix (m1);
+        //print_dense_matrix(m2);
         print_dense_matrix(result);
         
         return result;
     }
-
+    
+    printf ("\033[91mInvalid matrices.\n\033[0m");
     return NULL;
 }
 
@@ -420,7 +427,7 @@ Matrix* multiply_scalar_matrix (Matrix* m, float scalar)
     
     else
     {
-        printf ("Invalid matrix.\n");
+        printf ("\033[91mInvalid matrix.\033[0m\n");
         return NULL;
     }
 }
@@ -451,26 +458,53 @@ Matrix* multiply_per_cells_matrix (Matrix* m1, Matrix* m2)
     
     else
     {   
-        printf ("Invalid matrix.\n");
+        printf ("\033[91mInvalid matrix.\033[0m\n");
         return NULL;
     }
 
 }
 
-Matrix* swap_lines_matrix ();
+Matrix* swap_lines_matrix ()
+{
+
+}
+
 Matrix* swap_columns_matrix ();
 
 Matrix* slice_matrix (Matrix* m, int fst_line, int fst_column, int last_line, int last_column)
 {   
-    int lines = fst_line - last_line + 1;
-    int columns = fst_column - last_column + 1;
+
+    if (fst_line < 0 || fst_line >= m->size_lines || last_line < 0 || last_line >= m->size_lines || fst_column < 0 || fst_column >= m->size_columns || last_column < 0 || last_column >= m->size_columns)
+    {
+        printf ("\033[91mInvalid Indexes.\033[0m\n");
+        return NULL;
+    }
+
+    if (fst_line == last_line && last_column == fst_column)
+    {
+        printf ("\033[91mInvalid Indexes.\033[0m\n");
+        return NULL;
+    }
+
+
+    if (fst_line == 0 && fst_column == 0 && last_line == m->size_lines - 1 && last_column == m->size_columns - 1)
+    {   
+        printf ("\n\033[91mNo slicing needed.\033[0m\n\n");
+        print_dense_matrix (m);
+        return NULL;
+    }
+
+    int lines = last_line - fst_line + 1;
+    int columns = last_column - fst_column + 1;
 
     Matrix* slice = construct_matrix (lines, columns);
-
-    for (int i = fst_line; i < last_line; i++)
+    for (int i = fst_line; i <= last_line; i++)
     {
-        for (int j = fst_column; j < last_column; j++)
-            add_value_matrix (slice, i, j, get_value_matrix(m, i, j));
+        for (int j = fst_column; j <= last_column; j++)
+        {
+            add_value_matrix (slice, i - fst_line, j-fst_column, get_value_matrix(m, i, j));
+            //print_sparse_matrix (slice);
+        }
     }
 
     print_dense_matrix (m);
@@ -520,7 +554,13 @@ void print_sparse_matrix (Matrix* m)
 }
 
 void print_dense_matrix (Matrix* m)
-{     
+{    
+    if (m == NULL)
+    {
+        printf ("Invalid Matrix.\n");
+        return;
+    }
+
     //por colunas
     for (int i=0; i< m->size_lines; i++)
     {
