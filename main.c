@@ -10,7 +10,6 @@
 int main (int argc, char** argv){
 
     Matrix* m = construct_matrix (SZ_LINES, SZ_COLUMNS);
-    Matrix* m2 = construct_matrix (-1, 0);
 
     //print_dense_matrix (m);
     for (int i=0;i<SZ_LINES;i++){
@@ -25,6 +24,11 @@ int main (int argc, char** argv){
             add_value_matrix(m1, i, j, -i-j);
          
     }
+    
+    Matrix* swap_columns = swap_columns_matrix(m, 1, 2);
+    Matrix* swap_lines = swap_lines_matrix (m, 1, 2);
+    destroy_matrix (swap_lines);
+    destroy_matrix (swap_columns);
 
     /* 
     //GET VALUE TEST

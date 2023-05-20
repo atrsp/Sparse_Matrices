@@ -30,8 +30,8 @@ Matrix* sum_matrix (Matrix* m1, Matrix* m2); //done
 Matrix* multiplication_of_matrix (Matrix* m1, Matrix* m2); //done
 Matrix* multiply_scalar_matrix (Matrix* m, float scalar); //done
 Matrix* multiply_per_cells_matrix (Matrix* m1, Matrix* m2); //done
-Matrix* swap_lines_matrix ();
-Matrix* swap_columns_matrix ();
+Matrix* swap_lines_matrix (Matrix* m, int idx_line1, int idx_line2); //done ***
+Matrix* swap_columns_matrix (Matrix* m, int idx_column1, int idx_column2); //done***
 Matrix* slice_matrix (Matrix* m, int fst_line, int fst_column, int last_line, int last_column); //done
 Matrix* transpose_matrix (Matrix* m); //done
 Matrix* convolution_matrix ();

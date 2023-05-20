@@ -409,6 +409,8 @@ Matrix* multiply_scalar_matrix (Matrix* m, float scalar)
     {
         Matrix* cpp = copy_matrix(m);
 
+        //fazer a cópia durante o loop, para evitar 2 loops
+
         for (int i=0; i< m->size_lines; i++)
         {
             Cell* c = cpp->head_lines[i];
@@ -464,12 +466,77 @@ Matrix* multiply_per_cells_matrix (Matrix* m1, Matrix* m2)
 
 }
 
-Matrix* swap_lines_matrix ()
+Matrix* swap_lines_matrix (Matrix* m, int idx_line1, int idx_line2)
 {
+    if (idx_line1 >= m->size_lines || idx_line1 < 0 || idx_line2 >= m->size_lines || idx_line2 < 0 || idx_line1 == idx_line2)
+    {
+        printf ("\033[91mInvalid Indexes.\033[0m\n");
+        return NULL;
+    }   
 
+    print_dense_matrix (m);
+
+    Matrix* swap = construct_matrix (m->size_lines, m->size_columns);
+    int line;
+
+    for( int i = 0; i< m->size_columns; i++)
+    {
+        Cell* c = m->head_columns[i];
+        while (c != NULL)
+        {   
+            if (c->line == idx_line1)
+                line = idx_line2;
+            
+            else if (c->line == idx_line2)
+                line = idx_line1;
+            
+            else 
+                line = c->line;
+
+            add_value_matrix (swap, line, c->column, c->value);
+            c = c->next_line;
+        }
+    }
+
+    print_dense_matrix(swap);
+    return swap;
 }
 
-Matrix* swap_columns_matrix ();
+Matrix* swap_columns_matrix (Matrix* m, int idx_column1, int idx_column2)
+{
+    if (idx_column1 >= m->size_columns || idx_column1 < 0 || idx_column2 >= m->size_columns || idx_column2 < 0 || idx_column1 == idx_column2)
+    {
+        printf ("\033[91mInvalid Indexes.\033[0m\n");
+        return NULL;
+    }   
+
+    print_dense_matrix (m);
+
+    Matrix* swap = construct_matrix (m->size_lines, m->size_columns);
+    int column;
+
+    for( int i = 0; i< m->size_lines; i++)
+    {
+        Cell* c = m->head_lines[i];
+        while (c != NULL)
+        {   
+            if (c->column == idx_column1)
+                column = idx_column2;
+            
+            else if (c->column == idx_column2)
+                column = idx_column1;
+            
+            else 
+                column = c->column;
+
+            add_value_matrix (swap, c->line, column, c->value);
+            c = c->next_column;
+        }
+    }
+
+    print_dense_matrix(swap);
+    return swap;
+}
 
 Matrix* slice_matrix (Matrix* m, int fst_line, int fst_column, int last_line, int last_column)
 {   
@@ -535,6 +602,10 @@ Matrix* transpose_matrix (Matrix* m)
 }
 
 Matrix* convolution_matrix ();
+
+
+
+
 
 //-------------------- print --------------------
 
