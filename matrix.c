@@ -574,7 +574,9 @@ Matrix *swap_lines_matrix(Matrix *m, int idx_line1, int idx_line2)
 
     printf("\033[95mResult:\n\033[0m");
     print_dense_matrix(swap);
+
     printf("--------------------------------------\n\n");
+
     return swap;
 }
 

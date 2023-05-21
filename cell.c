@@ -4,13 +4,13 @@
 
 //-------------------- memory --------------------
 
-Cell* construct_cell (int line, int column, float value)
+Cell *construct_cell(int line, int column, float value)
 {
 
-    //COMPLEXITY
-    //The time complexity of this function is O(1) because there is no iteration, which means it's time of execution is constant.
+    // COMPLEXITY
+    // The time complexity of this function is O(1) because there is no iteration, which means it's time of execution is constant.
 
-    Cell* c = (Cell*)calloc(1, sizeof(Cell));
+    Cell *c = (Cell *)calloc(1, sizeof(Cell));
 
     c->value = value;
     c->line = line;
@@ -22,11 +22,11 @@ Cell* construct_cell (int line, int column, float value)
     return c;
 }
 
-void destroy_cell (Cell* c)
-{   
-    //COMPLEXITY
-    //The time complexity of this function is O(1) because there is no iteration, which means it's time of execution is constant.
-    
+void destroy_cell(Cell *c)
+{
+    // COMPLEXITY
+    // The time complexity of this function is O(1) because there is no iteration, which means it's time of execution is constant.
+
     if (c != NULL)
-        free (c);
+        free(c);
 }
