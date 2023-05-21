@@ -15,5 +15,3 @@ typedef struct cell
 
 Cell *construct_cell(int line, int column, float value);
 void destroy_cell(Cell *c);
-
-//-------------------- auxiliary --------------------

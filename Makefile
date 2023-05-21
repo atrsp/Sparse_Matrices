@@ -17,4 +17,4 @@ valgrind:
 
 convolution:
 	gcc -o convolution convolution.c matrix.c cell.c
-	./convolution
+	valgrind ./convolution
