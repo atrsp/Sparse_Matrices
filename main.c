@@ -7,92 +7,96 @@
 #define SZ_LINES 4
 #define SZ_COLUMNS 5
 
-int main (int argc, char** argv){
+int main(int argc, char **argv)
+{
 
-    Matrix* m = construct_matrix (SZ_LINES, SZ_COLUMNS);
+    Matrix *m = construct_matrix(SZ_LINES, SZ_COLUMNS);
 
-    //print_dense_matrix (m);
-    for (int i=0;i<SZ_LINES;i++){
-        for (int j=0;j<SZ_COLUMNS; j++)
-            add_value_matrix(m, i, j, i+j);
+    for (int i = 0; i < SZ_LINES; i++)
+    {
+        for (int j = 0; j < SZ_COLUMNS; j++)
+            add_value_matrix(m, i, j, i + j);
     }
 
-    Matrix* m1 = construct_matrix (SZ_LINES, SZ_COLUMNS);
+    Matrix *m1 = construct_matrix(SZ_LINES, SZ_COLUMNS);
 
-    for (int i=0;i<SZ_LINES;i++){
-        for (int j=0;j<SZ_COLUMNS; j++)
-            add_value_matrix(m1, i, j, -i-j);
-         
+    for (int i = 0; i < SZ_LINES; i++)
+    {
+        for (int j = 0; j < SZ_COLUMNS; j++)
+            add_value_matrix(m1, i, j, -i - j);
     }
-    
-    Matrix* swap_columns = swap_columns_matrix(m, 1, 2);
-    Matrix* swap_lines = swap_lines_matrix (m, 1, 2);
-    destroy_matrix (swap_lines);
-    destroy_matrix (swap_columns);
 
-    /* 
-    //GET VALUE TEST
-    for (int i=0;i<SZ_LINES;i++){
-        for (int j=0;j<SZ_COLUMNS; j++)
-            printf ("val: %.0f,   ", get_value_matrix(m, i, j));
-        printf ("\n");
+    // MATRIX PRINTING TEST
+    printf("PRINT:\n\n");
+    print_dense_matrix(m);
+    print_sparse_matrix(m);
+    printf("--------------------------------------\n\n");
+
+    printf("PRINT:\n\n");
+    print_dense_matrix(m1);
+    print_sparse_matrix(m1);
+    printf("--------------------------------------\n\n");
+
+    // SWAP TEST
+    Matrix *swap_columns = swap_columns_matrix(m, 1, 2);
+    Matrix *swap_lines = swap_lines_matrix(m, 1, 2);
+    destroy_matrix(swap_columns);
+    destroy_matrix(swap_lines);
+
+    // MULTIPLICATION PER SCALAR TEST
+    Matrix *mscalar = multiply_scalar_matrix(m, 2);
+    destroy_matrix(mscalar);
+
+    // TRANSPOSED MATRIX TESTE
+    Matrix *transp = transpose_matrix(m);
+
+    // SUM TEST
+    Matrix *sum = sum_matrix(m1, m);
+    destroy_matrix(sum);
+
+    // BINARY FILES TEST
+    bin_print_sparse_matrix("bin", m);
+    Matrix *read = bin_read_sparse_matrix(argv[1]);
+    destroy_matrix(read);
+
+    // SLICE MATRIX TEST
+    Matrix *slice = slice_matrix(m, 1, 1, 2, 2);
+    destroy_matrix(slice);
+
+    // GET VALUE TEST
+    printf("GET VALUE:\n\n");
+    for (int i = 0; i < SZ_LINES; i++)
+    {
+        for (int j = 0; j < SZ_COLUMNS; j++)
+            printf("val: %.0f   ", get_value_matrix(m, i, j));
+        printf("\n");
     }
-    */
+    printf("\n--------------------------------------\n\n");
 
-    //MATRIX PRINTING TEST
-    //print_dense_matrix (m);
-    //print_sparse_matrix (m);
-
-    /*
-    //MULTIPLICATION PER SCALAR TEST
-    Matrix* mscalar = multiply_scalar_matrix (m, 26);
-    destroy_matrix (mscalar);
-    */
-
-    /*
-    //TRANSPOSED MATRIX TESTE
-    Matrix* transp = transpose_matrix (m);
-    destroy_matrix (transp);
-    */
-    
-
-    /*
-    //SUM TEST
-    Matrix* sum = sum_matrix (m1, m1);
-    destroy_matrix (sum);
-    */
-
-    /*
-    //BINARY FILES TEST
-    bin_print_sparse_matrix ("bin", m);
-    Matrix* read = bin_read_sparse_matrix(argv[1]);
-    destroy_matrix (read);
-    */
-
-    /*
-    //SLICE MATRIX TEST
-    Matrix* slice = slice_matrix (m, 1, 1, 2, 2);
-    destroy_matrix (slice);
-    */
-
-    /*
-    //MULTIPLICATION OF MATRICES TEST
-    Matrix* transp = transpose_matrix(m);
-    Matrix* mult = multiplication_of_matrix (m, transp);
-    Matrix* mult2 = multiplication_of_matrix (transp, m);
+    // MULTIPLICATION OF MATRICES TEST
+    Matrix *mult = multiplication_of_matrix(m, transp);
+    Matrix *mult2 = multiplication_of_matrix(transp, m);
     destroy_matrix(mult2);
-    destroy_matrix (mult);
-    destroy_matrix (transp);
-    */
+    destroy_matrix(mult);
+    destroy_matrix(transp);
 
-   /*
-   //MULTIPLICATION PER CELLS TEST
-   Matrix* mult = multiply_per_cells_matrix (m, m1);
-   destroy_matrix (mult);
-   */
+    // MULTIPLICATION PER CELLS TEST
+    Matrix *mult_cells = multiply_per_cells_matrix(m, m1);
+    destroy_matrix(mult_cells);
 
-    destroy_matrix (m);
-    destroy_matrix (m1);
-    
+    destroy_matrix(m);
+    destroy_matrix(m1);
+
+    Matrix *m2 = construct_matrix(SZ_LINES, SZ_COLUMNS);
+
+    for (int i = 0; i < SZ_LINES; i++)
+    {
+        for (int j = 0; j < SZ_COLUMNS; j++)
+            add_value_matrix(m2, i, j, 6);
+    }
+
+    add_value_matrix(m2, 0, -1, 0);
+    float a = get_value_matrix(m2, 0, -1);
+
     return 0;
 }
