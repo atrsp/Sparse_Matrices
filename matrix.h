@@ -43,4 +43,4 @@ void print_dense_matrix(Matrix *m);
 
 //-------------------- auxiliary --------------------
 
-float sum_cells_matrix (Matrix* m);
+float sum_cells_matrix(Matrix *m);

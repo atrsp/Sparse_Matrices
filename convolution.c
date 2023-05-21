@@ -8,7 +8,7 @@
 #define SZ_COLUMNS 5
 
 int main(int argc, char **argv)
-{   
+{
 
     Matrix *m = construct_matrix(SZ_LINES, SZ_COLUMNS);
 
@@ -26,9 +26,8 @@ int main(int argc, char **argv)
             add_value_matrix(k, i, j, 6);
     }
 
-
-    Matrix* conv = convolution_matrix (m, k);
-    destroy_matrix (conv);
+    Matrix *conv = convolution_matrix(m, k);
+    destroy_matrix(conv);
     destroy_matrix(k);
     destroy_matrix(m);
 
@@ -41,9 +40,8 @@ int main(int argc, char **argv)
         90.00  162.00  216.00  270.00  198.00
 
         72.00  126.00  162.00  198.00  144.00
-    
+
     */
 
     return 0;
 }
-
