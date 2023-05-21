@@ -34,7 +34,7 @@ Matrix *swap_lines_matrix(Matrix *m, int idx_line1, int idx_line2);
 Matrix *swap_columns_matrix(Matrix *m, int idx_column1, int idx_column2);
 Matrix *slice_matrix(Matrix *m, int fst_line, int fst_column, int last_line, int last_column);
 Matrix *transpose_matrix(Matrix *m);
-Matrix *convolution_matrix();
+Matrix *convolution_matrix(Matrix *m, Matrix *kernel);
 
 //-------------------- print --------------------
 
@@ -43,4 +43,4 @@ void print_dense_matrix(Matrix *m);
 
 //-------------------- auxiliary --------------------
 
-Matrix *copy_matrix(Matrix *m);
+float sum_cells_matrix (Matrix* m);

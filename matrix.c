@@ -497,7 +497,6 @@ Matrix *multiply_per_cells_matrix(Matrix *m1, Matrix *m2)
     // COMPLEXITY
     // Considering N the number of items in a column or in a row.
     // The time complexity of this function is O(N^3), because it has 3 loops inside of each other (the functions get_value_matrix and add_value_matrix have the complexity O(N)).
-    printf("MULTIPLICATION PER CELLS:\n\n");
 
     if (m1->size_lines == m2->size_lines && m1->size_columns == m2->size_columns)
     {
@@ -513,16 +512,6 @@ Matrix *multiply_per_cells_matrix(Matrix *m1, Matrix *m2)
             }
         }
 
-        printf("\033[92mPrevious matrix (1):\033[0m\n");
-        print_dense_matrix(m1);
-
-        printf("\033[92mPrevious matrix (2):\033[0m\n");
-        print_dense_matrix(m2);
-
-        printf("\033[95mResult:\n\033[0m");
-        print_dense_matrix(result);
-
-        printf("--------------------------------------\n\n");
         return result;
     }
 
@@ -632,8 +621,6 @@ Matrix *slice_matrix(Matrix *m, int fst_line, int fst_column, int last_line, int
     // The time complexity of this function is O(N^4), because it has 4 loops inside of each other (the functions add_value_matrix and get_value_matrix have the complexity O(N)).
     // In this case, when the function add_value_matrix() is used, the get_value_function is used as a parameter, creating a 4th loop.
 
-    printf("SLICE MATRIX:\n\n");
-
     if (fst_line < 0 || fst_line >= m->size_lines || last_line < 0 || last_line >= m->size_lines || fst_column < 0 || fst_column >= m->size_columns || last_column < 0 || last_column >= m->size_columns)
     {
         printf("\033[91mInvalid Indexes.\033[0m\n\n");
@@ -662,14 +649,6 @@ Matrix *slice_matrix(Matrix *m, int fst_line, int fst_column, int last_line, int
         for (int j = fst_column; j <= last_column; j++)
             add_value_matrix(slice, i - fst_line, j - fst_column, get_value_matrix(m, i, j));
     }
-
-    printf("\033[92mPrevious matrix:\033[0m\n");
-    print_dense_matrix(m);
-
-    printf("\033[95mResult:\n\033[0m");
-    print_dense_matrix(slice);
-
-    printf("--------------------------------------\n\n");
 
     return slice;
 }
@@ -712,7 +691,48 @@ Matrix *transpose_matrix(Matrix *m)
     return transp;
 }
 
-Matrix *convolution_matrix();
+Matrix *convolution_matrix(Matrix *m, Matrix *kernel)
+{
+    // COMPLEXITY
+    // Considering N the number of items in a column or in a row.
+    // The time complexity of this function is O(N^6), because it has 6(maximum) loops inside of each other (the function slice_matrix has the complexity O(N^4)).
+
+    if (m != NULL && kernel != NULL)
+    {
+        Matrix *aux = construct_matrix(m->size_lines + 2, m->size_columns + 2);
+
+        for (int i = 0; i < m->size_lines; i++)
+        {
+            for (int j = 0; j < m->size_columns; j++)
+                add_value_matrix(aux, i + 1, j + 1, get_value_matrix(m, i, j));
+        }
+
+        Matrix *result = construct_matrix(m->size_lines, m->size_columns);
+
+        for (int i = 0; i < aux->size_lines + 1 - kernel->size_lines; i++)
+        {
+            float sum = 0;
+            for (int j = 0; j < aux->size_columns + 1 - kernel->size_columns; j++)
+            {
+                Matrix *sliced = slice_matrix(aux, i, j, i + kernel->size_lines - 1, j + kernel->size_columns - 1);
+                Matrix *mult = multiply_per_cells_matrix(kernel, sliced);
+
+                sum = sum_cells_matrix(mult);
+                add_value_matrix(result, i, j, sum);
+
+                destroy_matrix(mult);
+                destroy_matrix(sliced);
+            }
+        }
+
+        destroy_matrix(aux);
+        print_dense_matrix(result);
+
+        return result;
+    }
+
+    return NULL;
+}
 
 //-------------------- print --------------------
 
@@ -798,26 +818,19 @@ void print_dense_matrix(Matrix *m)
 
 //-------------------- auxiliary --------------------
 
-Matrix *copy_matrix(Matrix *m)
+float sum_cells_matrix(Matrix *m)
 {
-    // Wasn't used in this last version.
-
     // COMPLEXITY
     // Considering N the number of items in a column or in a row.
-    // The time complexity of this function is O(N^3), because it has 3 loops inside of each other (the function add_value_matrix has the complexity O(N)).
+    // The time complexity of this function is O(N^3), because it has 3 loops inside of each other (the function get_value_matrix has the complexity O(N)).
 
-    Matrix *cpp = construct_matrix(m->size_lines, m->size_columns);
+    float sum = 0;
 
     for (int i = 0; i < m->size_lines; i++)
     {
-        Cell *c = m->head_lines[i];
-        while (c != NULL)
-        {
-            add_value_matrix(cpp, c->line, c->column, c->value);
-            c = c->next_column;
-        }
+        for (int j = 0; j < m->size_columns; j++)
+            sum += get_value_matrix(m, i, j);
     }
 
-    // print_dense_matrix (cpp);
-    return cpp;
+    return sum;
 }
