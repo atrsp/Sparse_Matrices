@@ -8,8 +8,8 @@
 #define SZ_COLUMNS 5
 
 // always odd numbers for the kernel size
-#define LINES_KERNEL 7
-#define COLUMNS_KERNEL 5
+#define LINES_KERNEL 3
+#define COLUMNS_KERNEL 3
 
 int main(int argc, char **argv)
 {
@@ -44,8 +44,6 @@ int main(int argc, char **argv)
     add_value_matrix(kernel, 2, 0, 1);
     add_value_matrix(kernel, 2, 2, 1);
 
-    // print_dense_matrix (kernel);
-
     add_value_matrix(new, 0, 1, 1);
     add_value_matrix(new, 0, 2, 1);
     add_value_matrix(new, 0, 3, 1);
@@ -64,8 +62,6 @@ int main(int argc, char **argv)
     add_value_matrix(new, 6, 0, 1);
     add_value_matrix(new, 6, 1, 1);
 
-    // print_dense_matrix (new);
-
     Matrix *conv = convolution_matrix(new, kernel);
 
     destroy_matrix(new);
@@ -74,13 +70,13 @@ int main(int argc, char **argv)
 
     /*EXPECTED OUTPUT:
 
-180.00  288.00  420.00  384.00  324.00
+24.00  54.00  90.00  126.00  96.00
 
-180.00  288.00  420.00  384.00  324.00
+54.00  108.00  162.00  216.00  162.00
 
-180.00  288.00  420.00  384.00  324.00
+90.00  162.00  216.00  270.00  198.00
 
-180.00  288.00  420.00  384.00  324.00
+72.00  126.00  162.00  198.00  144.00
 
 
 
