@@ -691,7 +691,7 @@ Matrix *transpose_matrix(Matrix *m)
     return transp;
 }
 
-Matrix *convolution_matrix(Matrix *m, Matrix *kernel)
+Matrix *convolution_matrix_old(Matrix *m, Matrix *kernel)
 {
     // COMPLEXITY
     // Considering N the number of items in a column or in a row.
@@ -731,6 +731,58 @@ Matrix *convolution_matrix(Matrix *m, Matrix *kernel)
         return result;
     }
 
+    return NULL;
+}
+
+Matrix *convolution_matrix(Matrix *m, Matrix *kernel)
+{
+    // COMPLEXITY
+    // Considering N the number of items in a column or in a row.
+    // The time complexity of this function is O(N^6), because it has 6(maximum) loops inside of each other (the functions get_value_matrix and add_value_matrix have the complexity O(N)).
+
+    if (m != NULL && kernel != NULL && kernel->size_columns%2 != 0 && kernel->size_lines %2 != 0)
+    {
+        Matrix *result = construct_matrix(m->size_lines, m->size_columns);
+
+            int middle_columns = kernel->size_columns/2;
+            int middle_lines = kernel->size_lines/2;
+
+
+            for (int i = 0; i < m->size_lines; i++)
+            {
+                float sum = 0;
+                for (int j = 0; j < m->size_columns; j++)
+                {   
+                    Matrix* new = construct_matrix (kernel->size_lines, kernel->size_columns);
+
+                    for (int h = i - middle_lines; h <= i + middle_lines; h++)
+                    {   
+                        for (int k = j - middle_columns; k <= j + middle_columns; k++)
+                        {   
+                            if (k < 0 || k >= m->size_columns || h < 0 || h >= m->size_lines )
+                                add_value_matrix (new, h+middle_lines-i, k+middle_columns-j, 0);
+                            
+
+                            else
+                                add_value_matrix (new, h+middle_lines-i, k+middle_columns-j, get_value_matrix(m, h, k));                       
+                        }
+                    }
+
+                    Matrix *mult = multiply_per_cells_matrix(kernel, new);
+
+                    sum = sum_cells_matrix(mult);
+                    add_value_matrix(result, i, j, sum);
+
+                    destroy_matrix(mult);
+                    destroy_matrix(new);
+                }
+            }
+
+            print_dense_matrix(result);
+
+            return result;
+    }
+    
     return NULL;
 }
 
