@@ -1,6 +1,6 @@
 # Sparse_Matrices
 A College Work designed to solve basic operations with Sparse Matrices.
-###### *It also works for Dense Matrices, even though it's no the most optimized use of memory to treat them.*
+###### *It also works for Dense Matrices, even though it's NOT the most optimized use of memory to treat them.*
 
 #
 #### These images exemplify how the Linked Lists were stored:
